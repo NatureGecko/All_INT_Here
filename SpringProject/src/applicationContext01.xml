@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- property file -->
+	<context:property-placeholder location="classpath:application.properties"/>
+
+	<!-- Inversion of Control - IoC : Scope: singleton (default) vs. prototype -->
+	<bean id="dbServiceBean" class="spring01.model.DbInfoService" scope="prototype"/>
+
+	<!-- constructor injection (using constructor-arg); inject literal values (using value="...") -->
+	<bean id="emailAddrBeanConstruct" class="spring01.model.EmailAddress" scope="singleton">
+		<constructor-arg type="java.lang.String" value="sit"/>
+		<constructor-arg type="java.lang.String" value="kmutt.ac.th"/>
+	</bean><!-- type="JAVA_DATA_TYPE" is optional -->
+
+	<!-- setter injection (using property); inject from a property file (using ${...}) -->
+	<bean id="emailAddrBeanSetter" class="spring01.model.EmailAddress" scope="singleton">
+		<property name="userName"   value="${email.account}"/>
+		<property name="domainName" value="${email.domain}"/>		
+	</bean>
+
+	<!-- constructor injection; 
+		inject a literal value (value="LITERAL") and an object reference (ref="BEAN_NAME") 
+		call starting() right after bean is created (init-method="...") and 
+		call ending() right before bean is destroyed (destroy-method="...")
+	-->
+	<bean id="emailServiceBean" class="spring01.model.EmailInfoService" 
+		scope="singleton" init-method="starting" destroy-method="ending">
+		<constructor-arg index="0" value="School of Information Technology"/>
+		<constructor-arg index="1" ref="emailAddrBeanSetter"/>
+	</bean><!-- index="NUMBER" is optional -->
+	
+</beans>
